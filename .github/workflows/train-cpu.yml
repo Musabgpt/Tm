@@ -1,0 +1,58 @@
+name: Train Tiny Arabic Samsung Agent (CPU)
+
+on:
+  workflow_dispatch:
+    inputs:
+      hours:
+        description: 'CPU training budget for this run (max 5 hours)'
+        required: false
+        default: '5'
+      examples_per_intent:
+        description: 'Synthetic examples per intent'
+        required: false
+        default: '1200'
+  schedule:
+    - cron: '17 2 * * *'
+
+jobs:
+  train:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    permissions:
+      contents: write
+      actions: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Train on CPU with resumable checkpoint
+        env:
+          TM_TRAIN_HOURS: ${{ github.event.inputs.hours || '5' }}
+          TM_EXAMPLES_PER_INTENT: ${{ github.event.inputs.examples_per_intent || '1200' }}
+          TM_CPU_THREADS: '2'
+        run: python scripts/train_cpu.py
+
+      - name: Package checkpoint/model
+        run: |
+          mkdir -p artifacts
+          cp -r /tmp/tm-training/export artifacts/export 2>/dev/null || true
+          cp -r /tmp/tm-training/checkpoints artifacts/checkpoints 2>/dev/null || true
+          cp /tmp/tm-training/metrics.json artifacts/metrics.json 2>/dev/null || true
+          tar -czf tm-cpu-training-output.tar.gz artifacts
+
+      - name: Upload training artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: tm-cpu-training-${{ github.run_number }}
+          path: tm-cpu-training-output.tar.gz
+          retention-days: 30
