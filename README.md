@@ -1,6 +1,6 @@
 # MusabAI Samsung Phone Agent
 
-Tiny Arabic intent model for Samsung/Android phone commands.
+Tiny Arabic NLU model for Samsung/Android phone commands.
 
 ## Goal
 Arabic speech/text → intent + parameters → Android/Termux executor.
@@ -11,19 +11,19 @@ Example:
 
 The model is intentionally tiny. It does not execute Android commands itself; an external validated executor performs the action.
 
-## Kaggle
+## Training: CPU only
 
-The training notebook is in `notebooks/MusabAI_Samsung_Phone_Agent_Kaggle.ipynb`.
+This project does **not** use Kaggle or a GPU.
 
-It:
-- starts from `asafaya/bert-mini-arabic` (~11.6M parameters)
-- discovers Samsung/Galaxy/Android datasets in `/kaggle/input`
-- builds Arabic phone-command training data
-- fine-tunes intent classification
-- saves resumable checkpoints
-- exports the trained model and command schema
+Training runs from GitHub Actions on CPU and is resumable through checkpoints/artifacts. The workflow is `.github/workflows/train-cpu.yml` and can be started manually from the **Actions** tab.
 
-The target is a cumulative 30-hour training budget across resumable Kaggle sessions, not one 30-hour session.
+The trainer starts from `asafaya/bert-mini-arabic` (~11.6M parameters), generates Arabic phone-command examples, fine-tunes intent classification, evaluates the model, and exports the model plus command schema.
+
+Because CPU training is slow, each GitHub Actions run is bounded to a few hours. Repeated runs continue from the latest checkpoint rather than pretending a single run can last 30 hours.
+
+## Data
+
+`data/commands_seed.jsonl` contains the initial Arabic/Samsung phone-command seed set. The training script expands it with controlled Arabic and Levantine-style wording variants.
 
 ## Safety
 
