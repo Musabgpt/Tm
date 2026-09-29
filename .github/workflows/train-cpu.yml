@@ -1,6 +1,12 @@
 name: Train Tiny Arabic Samsung Agent (CPU)
 
 on:
+  push:
+    paths:
+      - 'scripts/train_cpu.py'
+      - 'data/**'
+      - 'requirements.txt'
+      - '.github/workflows/train-cpu.yml'
   workflow_dispatch:
     inputs:
       hours:
@@ -31,6 +37,14 @@ jobs:
         with:
           python-version: '3.11'
           cache: pip
+
+      - name: Restore training checkpoint cache
+        uses: actions/cache@v4
+        with:
+          path: /tmp/tm-training
+          key: tm-training-v1-${{ runner.os }}-${{ hashFiles('scripts/train_cpu.py', 'data/commands_seed.jsonl', 'requirements.txt') }}
+          restore-keys: |
+            tm-training-v1-${{ runner.os }}-
 
       - name: Install dependencies
         run: pip install -r requirements.txt
