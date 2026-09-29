@@ -1,0 +1,29 @@
+{"text":"افتح واتساب","intent":"OPEN_APP"}
+{"text":"شغل واتساب","intent":"OPEN_APP"}
+{"text":"بدي افتح واتساب","intent":"OPEN_APP"}
+{"text":"سكر واتساب","intent":"CLOSE_APP"}
+{"text":"ابعت لمحمد مرحبا","intent":"SEND_MESSAGE"}
+{"text":"رسل لمحمود كيفك","intent":"SEND_MESSAGE"}
+{"text":"اتصل بأحمد","intent":"CALL_CONTACT"}
+{"text":"دق على مروة","intent":"CALL_CONTACT"}
+{"text":"جيب آخر رسالة","intent":"READ_MESSAGES"}
+{"text":"اقرأ آخر رسالة وصلتني","intent":"READ_MESSAGES"}
+{"text":"ذكرني بعد ساعة","intent":"SET_REMINDER"}
+{"text":"نبهني بعد نص ساعة","intent":"SET_REMINDER"}
+{"text":"افتح الكاميرا","intent":"OPEN_CAMERA"}
+{"text":"صور","intent":"TAKE_PHOTO"}
+{"text":"افتح الاستديو","intent":"OPEN_GALLERY"}
+{"text":"ارفع الصوت","intent":"VOLUME_UP"}
+{"text":"وطي الصوت","intent":"VOLUME_DOWN"}
+{"text":"حط الهاتف صامت","intent":"MUTE"}
+{"text":"افتح الإعدادات","intent":"OPEN_SETTINGS"}
+{"text":"افتح الواي فاي","intent":"OPEN_WIFI_SETTINGS"}
+{"text":"شغل الواي فاي","intent":"ENABLE_WIFI"}
+{"text":"طفي الواي فاي","intent":"DISABLE_WIFI"}
+{"text":"شغل البلوتوث","intent":"ENABLE_BLUETOOTH"}
+{"text":"طفي البلوتوث","intent":"DISABLE_BLUETOOTH"}
+{"text":"كم البطارية","intent":"GET_BATTERY"}
+{"text":"افتح Samsung Notes","intent":"OPEN_NOTES"}
+{"text":"افتح التقويم","intent":"OPEN_CALENDAR"}
+{"text":"اقفل الشاشة","intent":"LOCK_SCREEN"}
+{"text":"شو الأخبار","intent":"UNKNOWN"}
