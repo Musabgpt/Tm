@@ -3,7 +3,7 @@ name: Train Tiny Arabic Samsung Agent (CPU)
 on:
   push:
     paths:
-      - 'scripts/train_cpu.py'
+      - 'scripts/train_cpu_fixed.py'
       - 'data/**'
       - 'requirements.txt'
       - '.github/workflows/train-cpu.yml'
@@ -25,37 +25,32 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 350
     permissions:
-      contents: write
+      contents: read
       actions: read
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Python
-        uses: actions/setup-python@v5
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
           cache: pip
-
       - name: Restore training checkpoint cache
         uses: actions/cache@v4
         with:
           path: /tmp/tm-training
-          key: tm-training-v1-${{ runner.os }}-${{ hashFiles('scripts/train_cpu.py', 'data/commands_seed.jsonl', 'requirements.txt') }}
-          restore-keys: |
-            tm-training-v1-${{ runner.os }}-
-
-      - name: Install dependencies
-        run: pip install -r requirements.txt
-
+          key: tm-training-v2-${{ runner.os }}-${{ hashFiles('scripts/train_cpu_fixed.py', 'data/commands_seed.jsonl', 'requirements.txt') }}
+          restore-keys: tm-training-v2-${{ runner.os }}-
+      - name: Install CPU-only PyTorch
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install --index-url https://download.pytorch.org/whl/cpu 'torch>=2.4,<3'
+      - name: Install remaining dependencies
+        run: pip install 'transformers>=4.45,<5' 'datasets>=2.20,<4' 'accelerate>=0.34,<2' 'scikit-learn>=1.4,<2' 'pandas>=2,<3' 'numpy>=1.26,<3' 'sentencepiece>=0.2,<1'
       - name: Train on CPU with resumable checkpoint
         env:
           TM_TRAIN_HOURS: ${{ github.event.inputs.hours || '5' }}
           TM_EXAMPLES_PER_INTENT: ${{ github.event.inputs.examples_per_intent || '1200' }}
           TM_CPU_THREADS: '2'
-        run: python scripts/train_cpu.py
-
+        run: python scripts/train_cpu_fixed.py
       - name: Package checkpoint/model
         run: |
           mkdir -p artifacts
@@ -63,7 +58,6 @@ jobs:
           cp -r /tmp/tm-training/checkpoints artifacts/checkpoints 2>/dev/null || true
           cp /tmp/tm-training/metrics.json artifacts/metrics.json 2>/dev/null || true
           tar -czf tm-cpu-training-output.tar.gz artifacts
-
       - name: Upload training artifact
         uses: actions/upload-artifact@v4
         with:
